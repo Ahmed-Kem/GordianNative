@@ -1,16 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
-import { NativeWindStyleSheet } from 'nativewind';
-import { Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 
-NativeWindStyleSheet.setOutput({
-  default: 'native',
-});
+import AuthNav from './src/navigation/AuthNav';
 
 export default function App() {
   return (
-    <View className="flex-1 items-center justify-center">
-      <Text className="text-red-700 text-3xl">Gordian Native !</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <AuthNav />
+    </NavigationContainer>
   );
 }
