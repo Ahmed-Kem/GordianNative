@@ -5,6 +5,7 @@ import AuthScreen from '../screens/AuthScreen';
 import LogIn from '../screens/LogIn';
 import SignUp from '../screens/SignUp';
 import { AuthStackParamList } from '../types/AuthStackTypes';
+import { colors } from '../utils/constants/colors';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
@@ -14,7 +15,8 @@ export default function AuthNav() {
       initialRouteName="AuthScreen"
       screenOptions={{
         headerBackVisible: false,
-        statusBarColor: '#fffbeb',
+        statusBarColor: colors.amber,
+        headerShadowVisible: false,
       }}>
       <Stack.Screen
         name="AuthScreen"
@@ -27,20 +29,20 @@ export default function AuthNav() {
         name="LogIn"
         component={LogIn}
         options={{
-          headerTitle: (props) => <Header />,
-          headerStyle: { backgroundColor: '#262626' },
-          headerTintColor: '#fff',
-          statusBarColor: '#262626',
+          headerTitle: () => <Header />,
+          headerStyle: { backgroundColor: colors.dark1 },
+          headerTintColor: colors.white,
+          statusBarColor: colors.dark1,
         }}
       />
       <Stack.Screen
         name="SignUp"
         component={SignUp}
         options={{
-          headerTitle: (props) => <Header />,
-          headerStyle: { backgroundColor: '#262626' },
-          headerTintColor: '#fff',
-          statusBarColor: '#262626',
+          headerTitle: () => <Header />,
+          headerStyle: { backgroundColor: colors.dark1 },
+          headerTintColor: colors.white,
+          statusBarColor: colors.dark1,
         }}
       />
     </Stack.Navigator>
