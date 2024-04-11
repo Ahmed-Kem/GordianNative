@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "960482331132",
+    "project_id": "gordian-2ed20",
+    "storage_bucket": "gordian-2ed20.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960482331132:android:ba62fea8d82f16e3158a79",
+        "android_client_info": {
+          "package_name": "com.kemah.gordiannative"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "960482331132-de8dmtlg86pbg2vf6tibq8ijjq209nom.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGG8FsRv2D5RaykVgjQctqQvxQ1PSBhpw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "960482331132-de8dmtlg86pbg2vf6tibq8ijjq209nom.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
