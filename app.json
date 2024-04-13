@@ -4,12 +4,12 @@
     "slug": "gordiannative",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./src/assets/images/gordianLogoNoBG.svg",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./src/assets/images/gordianLogoNoBG.svg",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#fffbeb"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -19,21 +19,20 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./src/assets/images/gordianLogoNoBG.svg",
+        "backgroundColor": "#fffbeb"
       },
-      "googleServicesFile": "./google-services.json",
       "package": "com.kemah.gordiannative"
     },
-    "plugins": ["@react-native-firebase/app", "@react-native-firebase/auth", "@react-native-firebase/firestore"],
+    "plugins": [],
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./src/assets/images/gordianLogoNoBG.svg"
     },
     "extra": {
       "eas": {
         "projectId": "40babc3b-16fd-4dba-af7a-5c20981805ef"
       }
     },
-    "owner": "kemah"
+    "owner": "kemah",
   }
 }

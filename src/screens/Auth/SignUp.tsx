@@ -2,17 +2,24 @@ import { Image } from 'expo-image';
 import { useState } from 'react';
 import { View, Text, TextInput, Pressable } from 'react-native';
 
-import { colors } from '../utils/constants/colors';
+import { useAuthStore } from '../../stores/auth.store';
+import { SignUpProps } from '../../types/AuthStackTypes';
+import { colors } from '../../utils/constants/colors';
 
-export default function SignUp() {
+export default function SignUp({ navigation }: SignUpProps) {
   const [pswdShown, setPswdShown] = useState(false);
   const [pswdShownConfirm, setPswdShownConfirm] = useState(false);
   const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [progress, setProgress] = useState('0%');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [pswd, setPswd] = useState('');
   const [pswdConfirm, setPswdConfirm] = useState('');
+
+  const { signUp } = useAuthStore((state) => ({
+    signUp: state.signUp,
+  }));
 
   function checkPswdStrength(passwordValue: string) {
     const strengthChecks = {
@@ -46,16 +53,17 @@ export default function SignUp() {
 
   function checkFormData() {
     const errorMessage = getErrorMessage();
-    if (errorMessage) {
-      console.log(errorMessage);
+    if (errorMessage !== '') {
+      setErrorMessage(errorMessage);
     } else {
-      console.log('Success');
+      signUp(email, pswd);
     }
   }
 
   function getErrorMessage() {
+    const isEmailValid = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}/.test(email);
     if (!name) return 'Veuillez entrer votre nom complet';
-    if (!email) return 'Veuillez entrer votre adresse e-mail';
+    if (!email && isEmailValid) return 'Veuillez entrer une adresse e-mail valide';
     if (!pswd) return 'Veuillez entrer votre mot de passe';
     if (!pswdConfirm) return 'Veuillez confirmer votre mot de passe';
     if (pswd !== pswdConfirm) return 'Les mots de passe ne correspondent pas';
@@ -69,9 +77,10 @@ export default function SignUp() {
         <Text className="text-white font-semibold font-['Be Vietnam Pro'] text-lg mt-10">
           Créez votre compte
         </Text>
+        <Text className="text-red text-xs mt-12">{errorMessage}</Text>
         <TextInput
           placeholderTextColor="lightgrey"
-          className="text-white bg-dark1 placeholder:text-lightgrey w-[280] h-[40] mt-16 px-4 rounded-md border border-lightgrey focus:border-1 focus:border-white blur:border-lightgrey blur:border"
+          className="text-white bg-dark1 placeholder:text-lightgrey w-[280] h-[40] mt-4 px-4 rounded-md border border-lightgrey focus:border-1 focus:border-white blur:border-lightgrey blur:border"
           placeholder="Nom complet"
           autoCapitalize="none"
           autoCorrect={false}
@@ -93,19 +102,18 @@ export default function SignUp() {
             placeholder="Nouveau mot de passe"
             autoCapitalize="none"
             autoCorrect={false}
-            secureTextEntry={pswdShown}
+            secureTextEntry={!pswdShown}
             onChange={(e) => {
               setPswd(e.nativeEvent.text);
               checkPswdStrength(e.nativeEvent.text);
-              console.log('progress', progress);
             }}
           />
           <Pressable onPress={() => setPswdShown(!pswdShown)}>
             <Image
               source={
-                pswdShown
-                  ? require('../assets/images/hide-password.svg')
-                  : require('../assets/images/show-password.svg')
+                !pswdShown
+                  ? require('../../assets/images/hide-password.svg')
+                  : require('../../assets/images/show-password.svg')
               }
               className="w-6 h-6 top-2 right-8"
             />
@@ -133,15 +141,15 @@ export default function SignUp() {
             placeholder="Confirmer le mot de passe"
             autoCapitalize="none"
             autoCorrect={false}
-            secureTextEntry={pswdShownConfirm}
+            secureTextEntry={!pswdShownConfirm}
             onChange={(e) => setPswdConfirm(e.nativeEvent.text)}
           />
           <Pressable onPress={() => setPswdShownConfirm(!pswdShownConfirm)}>
             <Image
               source={
-                pswdShownConfirm
-                  ? require('../assets/images/hide-password.svg')
-                  : require('../assets/images/show-password.svg')
+                !pswdShownConfirm
+                  ? require('../../assets/images/hide-password.svg')
+                  : require('../../assets/images/show-password.svg')
               }
               className="w-6 h-6 top-2 right-8"
             />
@@ -156,11 +164,11 @@ export default function SignUp() {
         <View className="h-[1px] w-[280] bg-lightgrey mt-10" />
 
         <Pressable className="w-[280] h-[40] bg-amber rounded-md flex flex-row items-center justify-evenly mt-8">
-          <Image source={require('../assets/images/google-logo.svg')} className="w-7 h-7" />
+          <Image source={require('../../assets/images/google-logo.svg')} className="w-7 h-7" />
           <Text className="font-medium text-sm">Continuer avec Google</Text>
         </Pressable>
         <Pressable className="w-[280] h-[40] bg-amber rounded-md flex flex-row items-center justify-evenly mt-5">
-          <Image source={require('../assets/images/apple-logo.svg')} className="w-6 h-7" />
+          <Image source={require('../../assets/images/apple-logo.svg')} className="w-6 h-7" />
           <Text className="font-medium text-sm">Continuer avec Apple</Text>
         </Pressable>
       </View>

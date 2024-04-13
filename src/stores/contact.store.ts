@@ -1,6 +1,6 @@
 import { User } from 'firebase/auth';
 import { create } from 'zustand';
-import { firestore } from '../firebase';
+import { auth, firestore } from '../../firebaseConfig';
 
 interface Contact {
   id: string;
@@ -54,7 +54,7 @@ export const useContactStore = create<contactStore>((set, get) => ({
   initContactStore: (_user) => {
     set({ user: _user });
 
-    return firestore
+    return auth
       .collection('Users')
       .doc(_user.uid)
       .collection('Contacts')

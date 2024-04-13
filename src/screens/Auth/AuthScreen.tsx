@@ -1,14 +1,17 @@
 import { Image } from 'expo-image';
 import { Pressable, Text, View } from 'react-native';
 
-import { AuthScreenProps } from '../types/AuthStackTypes';
+import { AuthScreenProps } from '../../types/AuthStackTypes';
 
 export default function AuthScreen({ navigation }: AuthScreenProps) {
   return (
     <>
       <View className="flex-1 items-center justify-center bg-amber">
         <View className="relative bottom-10 flex-1 items-center justify-center">
-          <Image source={require('../assets/images/gordianLogoNoBG.svg')} className="w-24 h-24" />
+          <Image
+            source={require('../../assets/images/gordianLogoNoBG.svg')}
+            className="w-24 h-24"
+          />
           <Text className="text-purple text-4xl font-bold font-['Be Vietnam Pro'] mt-5">
             Gordian
           </Text>

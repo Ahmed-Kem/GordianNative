@@ -1,6 +1,15 @@
-import { User } from 'firebase/auth';
+import {
+  User,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut,
+  updateEmail,
+  updatePassword,
+} from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import { create } from 'zustand';
-import { Auth, auth, firestore } from '../firebase';
+import { auth, firestore } from '../../firebaseConfig';
 
 type authStore = {
   user: User | null;
@@ -9,7 +18,7 @@ type authStore = {
   initAuthStore: () => void;
   signUp: (email: string, pswd: string) => void;
   signInWithPassword: (email: string, pswd: string) => void;
-  signInWithGoogle: () => void;
+  //signInWithGoogle: () => void;
   signOut: () => void;
   resetPswdEmail: (email: string) => void;
   //updateUser: () => void;
@@ -25,27 +34,25 @@ export const useAuthStore = create<authStore>((set) => ({
 
   initAuthStore: () => {
     return auth.onAuthStateChanged((user) => {
-      set({ user: user as User | null, isLoggedIn: user ? true : false });
+      set({ user: user as User | null, isLoggedIn: !!user });
     });
   },
 
   signUp: async (email, pswd) => {
-    await auth
-      .createUserWithEmailAndPassword(email, pswd)
+    await createUserWithEmailAndPassword(auth, email, pswd)
       .then((userCredential) => {
         const _user = userCredential.user;
-        firestore
-          .collection('Users')
-          .doc(userCredential.user?.uid)
-          .set({
-            id: _user?.uid,
-            name: _user?.displayName,
-            email: _user?.email,
-          })
+
+        setDoc(doc(firestore, 'Users', _user?.uid), {
+          id: _user?.uid,
+          name: _user?.displayName,
+          email: _user?.email,
+        })
           .then()
           .catch((e) => {
-            return { loginError: e.message };
+            set({ loginError: e.message });
           });
+
         set({ user: _user as User, isLoggedIn: true });
       })
       .catch((e) => {
@@ -56,27 +63,26 @@ export const useAuthStore = create<authStore>((set) => ({
   },
 
   signInWithPassword: async (email, pswd) => {
-    await auth
-      .signInWithEmailAndPassword(email, pswd)
+    await signInWithEmailAndPassword(auth, email, pswd)
       .then((userCredential) =>
         set({
           user: userCredential.user as User,
           isLoggedIn: true,
-        })
+        }),
       )
       .catch((e) => {
-        return { loginError: e.message };
+        set({ loginError: e.message });
       });
   },
 
-  signInWithGoogle: async () => {
-    var provider = new Auth.GoogleAuthProvider();
+  /*signInWithGoogle: async () => {
+    const provider = new auth.GoogleAuthProvider();
     provider.addScope('profile');
     provider.addScope('email');
     auth
       .signInWithPopup(provider)
       .then(function (result) {
-        firestore
+        firestore()
           .collection('Users')
           .doc(result.user?.uid)
           .set({
@@ -97,54 +103,56 @@ export const useAuthStore = create<authStore>((set) => ({
       .catch((e) => {
         return { loginError: e.message };
       });
-  },
+  },*/
 
   signOut: async () => {
-    await auth
+    signOut(auth)
+      .then(() => set({ user: null, isLoggedIn: false }))
+      .catch((e) => {
+        set({ loginError: e.message });
+      });
+    /*await auth
       .signOut()
       .then(() => set({ user: null, isLoggedIn: false }))
       .catch((e) => {
         return { loginError: e.message };
-      });
+      });*/
   },
 
   resetPswdEmail: async (email) => {
-    await auth
-      .sendPasswordResetEmail(email, {
-        url: 'https://gordian-2ed20.firebaseapp.com',
-        //url: `${window.location.origin}/NewPswd`,
-        //url: `localhost`,
-      })
+    await sendPasswordResetEmail(auth, email, {
+      url: 'https://gordian-2ed20.firebaseapp.com',
+      //url: `${window.location.origin}/NewPswd`,
+      //url: `localhost`,
+    })
       .then(() => {
         alert('Veuillez vérifier votre boite mail.');
       })
       .catch((e) => {
-        return { loginError: e.message };
+        set({ loginError: e.message });
       });
   },
 
   updateEmail: async (email) => {
     if (auth.currentUser) {
-      auth.currentUser
-        .updateEmail(email)
+      updateEmail(auth.currentUser, email)
         .then()
         .catch((e) => {
-          return { loginError: e.message };
+          set({ loginError: e.message });
         });
     }
   },
   updatePassword: async (pswd) => {
     if (auth.currentUser) {
-      auth.currentUser
-        .updatePassword(pswd)
+      updatePassword(auth.currentUser, pswd)
         .then()
         .catch((e) => {
-          return { loginError: e.message };
+          set({ loginError: e.message });
         });
     }
   },
 
   resetLoginError: () => {
-    return { loginError: '' };
+    set({ loginError: '' });
   },
 }));
