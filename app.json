@@ -4,10 +4,10 @@
     "slug": "gordiannative",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/gordianLogoNoBG.svg",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./src/assets/images/gordianLogoNoBG.svg",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#fffbeb"
     },
@@ -19,14 +19,14 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/images/gordianLogoNoBG.svg",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#fffbeb"
       },
       "package": "com.kemah.gordiannative"
     },
     "plugins": [],
     "web": {
-      "favicon": "./src/assets/images/gordianLogoNoBG.svg"
+      "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
