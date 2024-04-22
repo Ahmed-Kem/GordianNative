@@ -1,23 +1,18 @@
 import { User } from 'firebase/auth';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
 import { create } from 'zustand';
-import { firestore } from '../firebase';
 
-interface Contact {
-  id: string;
-  name: string;
-  color: string;
-  tags: Array<string>;
-  photoUrl: string;
-}
-
-interface Tag {
-  id: string;
-  name: string;
-  description: string;
-  color: string;
-  contacts: Array<string>;
-  photoUrl: string;
-}
+import { firestore } from '../../firebaseConfig';
 
 function generateRandomColor() {
   return '#' + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, '0');
@@ -25,8 +20,8 @@ function generateRandomColor() {
 
 type tagStore = {
   user: User | null;
-  tags: Array<Tag>;
-  tagIds: Array<Tag['id']>;
+  tags: Tag[];
+  tagIds: Tag['id'][];
   selectedTagId: Tag['id'] | null;
   isLoadingTag: boolean;
   initTagStore: (user: User) => void;
@@ -37,7 +32,7 @@ type tagStore = {
       name: Tag['name'];
       description: Tag['description'];
       photoUrl: Tag['photoUrl'];
-    }
+    },
   ) => void;
   deleteTag: (tagId: Tag['id']) => void;
   getTag: (tagId: Tag['id']) => Tag | undefined;
@@ -58,53 +53,41 @@ export const useTagStore = create<tagStore>((set, get) => ({
   initTagStore: (_user) => {
     set({ user: _user });
 
-    return firestore
-      .collection('Users')
-      .doc(_user.uid)
-      .collection('Tags')
-      .orderBy('name')
-      .onSnapshot((snapshot) => {
-        const updatedTags: Tag[] = snapshot.docs.map(
-          (doc) =>
-            ({
-              id: doc.id,
-              ...doc.data(),
-            } as Tag)
-        );
-        set({
-          tags: updatedTags,
-          tagIds: updatedTags.reduce(
-            (tempIds, tag) => [...tempIds, tag.id],
-            []
-          ),
-          isLoadingTag: false,
-        });
+    const orderedTagsCollection = query(
+      collection(firestore, 'Users', _user.uid, 'Tags'),
+      orderBy('name'),
+    );
+
+    return onSnapshot(orderedTagsCollection, (snapshot) => {
+      const updatedTags: Tag[] = snapshot.docs.map(
+        (doc) =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          }) as Tag,
+      );
+      set({
+        tags: updatedTags,
+        tagIds: updatedTags.reduce((tempIds: Tag['id'][], tag: Tag) => [...tempIds, tag.id], []),
+        isLoadingTag: false,
       });
+    });
   },
 
   addTag: (name, description) => {
-    const ref = firestore
-      .collection('Users')
-      .doc(get().user?.uid)
-      .collection('Tags')
-      .doc().id;
+    set({ isLoadingTag: true });
+    const TagsCollection = collection(firestore, 'Users', get().user?.uid as string, 'Tags');
 
-    firestore
-      .collection('Users')
-      .doc(get().user?.uid)
-      .collection('Tags')
-      .doc(ref)
-      .set({
-        id: ref,
-        name: name,
-        description: description,
-        color: generateRandomColor(),
-        contacts: [],
-      })
-      .then(() => {})
-      .catch((error) => {
-        console.error('Error writing tag: ', error);
-      });
+    const docRef = doc(TagsCollection).id;
+    setDoc(doc(TagsCollection, docRef), {
+      id: docRef,
+      name,
+      description,
+      color: generateRandomColor(),
+      contacts: [],
+    });
+
+    set({ isLoadingTag: false });
   },
 
   updateTag: (tagId, tagData) => {
@@ -112,18 +95,16 @@ export const useTagStore = create<tagStore>((set, get) => ({
 
     if (typeof tag !== 'undefined') {
       if (get().tags.includes(tag)) {
-        firestore
-          .collection('Users')
-          .doc(get().user?.uid)
-          .collection('Tags')
-          .doc(tagId)
-          .update(tagData)
+        const TagsCollection = collection(firestore, 'Users', get().user?.uid as string, 'Tags');
+
+        updateDoc(doc(TagsCollection, tagId), tagData)
           .then(() => {})
           .catch((error) => {
             console.error('Error updating tag: ', error);
           });
       }
     }
+    set({ isLoadingTag: false });
   },
 
   deleteTag: (tagId) => {
@@ -131,16 +112,16 @@ export const useTagStore = create<tagStore>((set, get) => ({
 
     if (typeof tag !== 'undefined') {
       if (get().tags.includes(tag)) {
-        firestore
-          .collection('Users')
-          .doc(get().user?.uid)
-          .collection('Tags')
-          .doc(tagId)
-          .delete()
+        set({ isLoadingTag: true });
+
+        const TagsCollection = collection(firestore, 'Users', get().user?.uid as string, 'Tags');
+
+        deleteDoc(doc(TagsCollection, tagId))
           .then(() => {})
           .catch((error) => {
             console.error('Error removing tag: ', error);
           });
+        set({ isLoadingTag: false });
       }
     }
   },
@@ -153,46 +134,48 @@ export const useTagStore = create<tagStore>((set, get) => ({
 
   addContactToTag: async (tag, contact) => {
     if (get().tags.includes(tag) && !tag.contacts.includes(contact.id)) {
-      await firestore
-        .collection('Users')
-        .doc(get().user?.uid)
-        .collection('Tags')
-        .doc(tag.id)
-        .update({ contacts: [...tag.contacts, contact.id] })
+      const TagsCollection = collection(firestore, 'Users', get().user?.uid as string, 'Tags');
+
+      updateDoc(doc(TagsCollection, tag.id), {
+        contacts: [...tag.contacts, contact.id],
+      })
         .then(() => {})
         .catch((error) => {
           console.error('Error adding contact to tag: ', error);
         });
+
+      set({ isLoadingTag: false });
     }
   },
 
   deleteContactFromTag: async (tag, contact) => {
+    set({ isLoadingTag: true });
     if (get().tags.includes(tag) && tag.contacts.includes(contact.id)) {
-      await firestore
-        .collection('Users')
-        .doc(get().user?.uid)
-        .collection('Tags')
-        .doc(tag.id)
-        .update({
-          contacts: tag.contacts.filter(
-            (idContact) => idContact !== contact.id
-          ),
-        })
+      const TagsCollection = collection(firestore, 'Users', get().user?.uid as string, 'Tags');
+
+      updateDoc(doc(TagsCollection, tag.id), {
+        contacts: tag.contacts.filter((idContact) => idContact !== contact.id),
+      })
         .then(() => {})
         .catch((error) => {
           console.error('Error deleting contact from tag: ', error);
         });
+      set({ isLoadingTag: false });
     }
   },
 
   deleteAllContactsFromTag: (tag) => {
     if (get().tags.includes(tag)) {
-      firestore
-        .collection('Users')
-        .doc(get().user?.uid)
-        .collection('Tags')
-        .doc(tag.id)
-        .update({ contacts: [] });
+      const TagsCollection = collection(firestore, 'Users', get().user?.uid as string, 'Tags');
+
+      updateDoc(doc(TagsCollection, tag.id), {
+        contacts: [],
+      })
+        .then(() => {})
+        .catch((error) => {
+          console.error('Error deleting all contacts from tag: ', error);
+        });
+      set({ isLoadingTag: false });
     }
   },
 

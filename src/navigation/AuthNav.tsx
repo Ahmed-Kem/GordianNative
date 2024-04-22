@@ -2,17 +2,16 @@ import { useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect } from 'react';
 
+import HomeNav from './HomeNav';
 import Header from '../components/Header';
 import AuthScreen from '../screens/Auth/AuthScreen';
-import CongratNewAccount from '../screens/Auth/CongratNewAccount';
 import LogIn from '../screens/Auth/LogIn';
 import SignUp from '../screens/Auth/SignUp';
-import Home from '../screens/Home';
 import { useAuthStore } from '../stores/auth.store';
 import { AuthStackParamList } from '../types/AuthStackTypes';
 import { colors } from '../utils/constants/colors';
 
-const Stack = createNativeStackNavigator<AuthStackParamList>();
+const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 
 export default function AuthNav() {
   const { isLoggedIn, initAuthStore } = useAuthStore((state) => ({
@@ -29,74 +28,46 @@ export default function AuthNav() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigation.navigate('Home');
-      console.log('User is signed in');
+      navigation.navigate('HomeNav');
     } else {
       navigation.navigate('AuthScreen');
-      console.log('User is not signed in');
     }
   }, [isLoggedIn]);
 
   return (
-    <Stack.Navigator
+    <AuthStack.Navigator
       initialRouteName="AuthScreen"
       screenOptions={{
+        headerTitle: () => <Header isGoBack />,
         headerBackVisible: false,
-        statusBarColor: colors.amber,
+        statusBarColor: colors.dark1,
         headerShadowVisible: false,
+        headerStyle: { backgroundColor: colors.dark1 },
+        headerTintColor: colors.white,
       }}>
       {isLoggedIn ? (
-        <Stack.Screen
-          name="Home"
-          component={Home}
+        <AuthStack.Screen
+          name="HomeNav"
+          component={HomeNav}
           options={{
-            headerTitle: () => <Header />,
-            headerStyle: { backgroundColor: colors.dark1 },
-            headerTintColor: colors.white,
-            statusBarColor: colors.dark1,
+            headerShown: false,
           }}
         />
       ) : (
         <>
-          <Stack.Screen
+          <AuthStack.Screen
             name="AuthScreen"
             component={AuthScreen}
             options={{
+              headerTitle: null,
               headerShown: false,
+              statusBarColor: colors.amber,
             }}
           />
-          <Stack.Screen
-            name="LogIn"
-            component={LogIn}
-            options={{
-              headerTitle: () => <Header />,
-              headerStyle: { backgroundColor: colors.dark1 },
-              headerTintColor: colors.white,
-              statusBarColor: colors.dark1,
-            }}
-          />
-          <Stack.Screen
-            name="SignUp"
-            component={SignUp}
-            options={{
-              headerTitle: () => <Header />,
-              headerStyle: { backgroundColor: colors.dark1 },
-              headerTintColor: colors.white,
-              statusBarColor: colors.dark1,
-            }}
-          />
-          <Stack.Screen
-            name="CongratNewAccount"
-            component={CongratNewAccount}
-            options={{
-              headerTitle: () => <Header />,
-              headerStyle: { backgroundColor: colors.dark1 },
-              headerTintColor: colors.white,
-              statusBarColor: colors.dark1,
-            }}
-          />
+          <AuthStack.Screen name="LogIn" component={LogIn} />
+          <AuthStack.Screen name="SignUp" component={SignUp} />
         </>
       )}
-    </Stack.Navigator>
+    </AuthStack.Navigator>
   );
 }

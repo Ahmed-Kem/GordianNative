@@ -1,39 +1,30 @@
 import { User } from 'firebase/auth';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
 import { create } from 'zustand';
-import { auth, firestore } from '../../firebaseConfig';
 
-interface Contact {
-  id: string;
-  name: string;
-  color: string;
-  tags: Array<string>;
-  photoUrl: string;
-}
-
-interface Tag {
-  id: string;
-  name: string;
-  description: string;
-  color: string;
-  contacts: Array<string>;
-  photoUrl: string;
-}
-
-function generateRandomColor() {
-  return '#' + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, '0');
-}
+import { firestore } from '../../firebaseConfig';
 
 type contactStore = {
   user: User | null;
-  contacts: Array<Contact>;
-  contactIds: Array<Contact['id']>;
+  contacts: Contact[];
+  contactIds: Contact['id'][];
   selectedContactId: Contact['id'] | null;
   isLoadingContact: boolean;
   initContactStore: (_user: User) => void;
   addContact: (name: Contact['name']) => void;
   updateContact: (
     contactId: Contact['id'],
-    contactData: { name: Contact['name']; photoUrl: Contact['photoUrl'] }
+    contactData: { name: Contact['name']; photoUrl: Contact['photoUrl'] },
   ) => void;
   deleteContact: (contactId: Contact['id']) => void;
   getContact: (contactId: Contact['id']) => Contact | undefined;
@@ -54,72 +45,76 @@ export const useContactStore = create<contactStore>((set, get) => ({
   initContactStore: (_user) => {
     set({ user: _user });
 
-    return auth
-      .collection('Users')
-      .doc(_user.uid)
-      .collection('Contacts')
-      .orderBy('name')
-      .onSnapshot((snapshot) => {
-        const updatedContacts: Contact[] = snapshot.docs.map(
-          (doc) =>
-            ({
-              id: doc.id,
-              ...doc.data(),
-            } as Contact)
-        );
+    const orderedContactsCollection = query(
+      collection(firestore, 'Users', _user.uid, 'Contacts'),
+      orderBy('name'),
+    );
+
+    return onSnapshot(
+      orderedContactsCollection,
+      (snapshot) => {
+        const updatedContacts: Contact[] = snapshot.docs.map((doc) => {
+          return {
+            id: doc.id,
+            ...doc.data(),
+          } as Contact;
+        });
 
         set({
           contacts: updatedContacts,
           contactIds: updatedContacts.reduce(
-            (tempIds, contact) => [...tempIds, contact.id],
-            []
+            (tempIds: Contact['id'][], contact: Contact) => [...tempIds, contact.id],
+            [],
           ),
           isLoadingContact: false,
         });
-      });
+      },
+      (error) => {
+        console.error('Error getting contacts: ', error);
+      },
+    );
   },
 
   addContact: (name) => {
-    const ref = firestore
-      .collection('Users')
-      .doc(get().user?.uid)
-      .collection('Contacts')
-      .doc().id;
+    set({ isLoadingContact: true });
+    const ContactsCollection = collection(
+      firestore,
+      'Users',
+      get().user?.uid as string,
+      'Contacts',
+    );
 
-    firestore
-      .collection('Users')
-      .doc(get().user?.uid)
-      .collection('Contacts')
-      .doc(ref)
-      .set({
-        id: ref,
-        name: name,
-        color: generateRandomColor(),
-        tags: [],
-      })
-      .then(() => {})
-      .catch((error) => {
-        console.error('Error writing contact: ', error);
-      });
+    const docRef = doc(ContactsCollection).id;
+    setDoc(doc(ContactsCollection, docRef), {
+      id: docRef,
+      name,
+      tags: [],
+    });
+
+    set({ isLoadingContact: false });
   },
 
   updateContact: (contactId, contactData) => {
+    set({ isLoadingContact: true });
     const contact = get().getContact(contactId);
 
     if (typeof contact !== 'undefined') {
       if (get().contacts.includes(contact)) {
-        firestore
-          .collection('Users')
-          .doc(get().user?.uid)
-          .collection('Contacts')
-          .doc(contactId)
-          .update(contactData)
+        const ContactsCollection = collection(
+          firestore,
+          'Users',
+          get().user?.uid as string,
+          'Contacts',
+        );
+
+        updateDoc(doc(ContactsCollection, contactId), contactData)
           .then(() => {})
           .catch((error) => {
             console.error('Error updating contact: ', error);
           });
       }
     }
+    set({ isLoadingContact: false });
   },
 
   deleteContact: (contactId) => {
@@ -127,16 +122,20 @@ export const useContactStore = create<contactStore>((set, get) => ({
 
     if (typeof contact !== 'undefined') {
       if (get().contacts.includes(contact)) {
-        firestore
-          .collection('Users')
-          .doc(get().user?.uid)
-          .collection('Contacts')
-          .doc(contactId)
-          .delete()
+        set({ isLoadingContact: true });
+        const ContactsCollection = collection(
+          firestore,
+          'Users',
+          get().user?.uid as string,
+          'Contacts',
+        );
+
+        deleteDoc(doc(ContactsCollection, contactId))
           .then(() => {})
           .catch((error) => {
             console.error('Error removing contact: ', error);
           });
+        set({ isLoadingContact: false });
       }
     }
   },
@@ -150,44 +149,60 @@ export const useContactStore = create<contactStore>((set, get) => ({
   },
 
   addTagToContact: async (contact, tag) => {
+    set({ isLoadingContact: true });
     if (get().contacts.includes(contact) && !contact.tags.includes(tag.id)) {
-      await firestore
-        .collection('Users')
-        .doc(get().user?.uid)
-        .collection('Contacts')
-        .doc(contact.id)
-        .update({ tags: [...contact.tags, tag.id] })
+      const ContactsCollection = collection(
+        firestore,
+        'Users',
+        get().user?.uid as string,
+        'Contacts',
+      );
+
+      updateDoc(doc(ContactsCollection, contact.id), {
+        tags: [...contact.tags, tag.id],
+      })
         .then(() => {})
         .catch((error) => {
           console.error('Error adding tag to contact: ', error);
         });
     }
+    set({ isLoadingContact: false });
   },
 
   deleteTagFromContact: async (contact, tag) => {
+    set({ isLoadingContact: true });
     if (get().contacts.includes(contact) && contact.tags.includes(tag.id)) {
-      await firestore
-        .collection('Users')
-        .doc(get().user?.uid)
-        .collection('Contacts')
-        .doc(contact.id)
-        .update({ tags: contact.tags.filter((idTag) => idTag !== tag.id) })
+      const ContactsCollection = collection(
+        firestore,
+        'Users',
+        get().user?.uid as string,
+        'Contacts',
+      );
+
+      updateDoc(doc(ContactsCollection, contact.id), {
+        tags: contact.tags.filter((idTag) => idTag !== tag.id),
+      })
         .then(() => {})
         .catch((error) => {
           console.error('Error deleting tag from contact: ', error);
         });
     }
+    set({ isLoadingContact: false });
   },
 
   deleteAllTagsFromContact: (contact) => {
+    set({ isLoadingContact: true });
     if (get().contacts.includes(contact)) {
-      firestore
-        .collection('Users')
-        .doc(get().user?.uid)
-        .collection('Contacts')
-        .doc(contact.id)
-        .update({ tags: [] });
+      const ContactsCollection = collection(
+        firestore,
+        'Users',
+        get().user?.uid as string,
+        'Contacts',
+      );
+
+      updateDoc(doc(ContactsCollection, contact.id), { tags: [] });
     }
+    set({ isLoadingContact: false });
   },
 
   resetContactStore: () =>
