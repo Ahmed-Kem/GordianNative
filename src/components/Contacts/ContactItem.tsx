@@ -5,7 +5,13 @@ import { useContactStore } from '../../stores/contact.store';
 import { useTagStore } from '../../stores/tag.store';
 import MiniTag from '../Tags/MiniTag';
 
-export default function ContactItem({ contactId }: Contact['id']) {
+export default function ContactItem({
+  contactId,
+  isShowLetter,
+}: {
+  contactId: string;
+  isShowLetter?: boolean;
+}) {
   const { getContact } = useContactStore((state) => ({
     getContact: state.getContact,
   }));
@@ -17,37 +23,45 @@ export default function ContactItem({ contactId }: Contact['id']) {
   const contact = getContact(contactId);
 
   return (
-    <Pressable
-      className="bg-dark2 w-[95vw] h-[72] flex-row items-center justify-start rounded-2xl px-3"
-      onPress={() => console.log('Press ', contact.name)}>
-      <Image
-        source={require('../../assets/images/profilePictureNoBG.svg')}
-        className="w-12 h-12 bg-dark1 rounded-full mr-3"
-      />
-      <View className="flex flex-col gap-2">
-        <Text className="text-white font-semibold" style={{ fontSize: 18 }}>
-          {contact.name}
+    <View className="flex flex-col items-start bg-none w-[95vw] h-[72]">
+      {isShowLetter && (
+        <Text className="h-7 text-white font-semibold text-2xl ml-4 mb-4">
+          {contact.name.charAt(0).toUpperCase()} .
         </Text>
-        {contact?.tags.length > 0 && (
-          <View className="flex flex-row">
-            <FlatList
-              data={contact.tags.slice(0, 3)}
-              renderItem={({ item }) => <MiniTag tagId={item} />}
-              keyExtractor={(id) => id}
-              contentContainerStyle={{
-                gap: 8,
-                paddingRight: 10,
-              }}
-              horizontal
-            />
-            {contact.tags.length > 3 ? (
-              <View className="w-6 h-6 items-center justify-center border border-amber rounded-full ml-3">
-                <Text className="text-white">+{contact.tags.length - 3}</Text>
-              </View>
-            ) : null}
-          </View>
-        )}
-      </View>
-    </Pressable>
+      )}
+
+      <Pressable
+        className="bg-dark2 w-[95vw] h-[72] flex-row items-center justify-start rounded-2xl px-3"
+        onPress={() => console.log('Press ', contact.name)}>
+        <Image
+          source={require('../../assets/images/profilePictureNoBG.svg')}
+          className="w-12 h-12 bg-dark1 rounded-full mr-3"
+        />
+        <View className="flex flex-col gap-2">
+          <Text className="text-white font-semibold" style={{ fontSize: 18 }}>
+            {contact.name}
+          </Text>
+          {contact?.tags.length > 0 && (
+            <View className="flex flex-row">
+              <FlatList
+                data={contact.tags.slice(0, 3)}
+                renderItem={({ item }) => <MiniTag tagId={item} />}
+                keyExtractor={(id) => id}
+                contentContainerStyle={{
+                  gap: 8,
+                  paddingRight: 10,
+                }}
+                horizontal
+              />
+              {contact.tags.length > 3 ? (
+                <View className="w-6 h-6 items-center justify-center border border-amber rounded-full ml-3">
+                  <Text className="text-white">+{contact.tags.length - 3}</Text>
+                </View>
+              ) : null}
+            </View>
+          )}
+        </View>
+      </Pressable>
+    </View>
   );
 }

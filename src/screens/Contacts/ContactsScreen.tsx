@@ -31,7 +31,7 @@ export default function ContactsScreen({ navigation }: ContactsScreenProps) {
       <View className="mt-6">
         <FlatList
           data={contactIdsToRender}
-          renderItem={({ item }) => <ContactItem contactId={item} />}
+          renderItem={({ item }) => <ContactItem contactId={item} isShowLetter />}
           keyExtractor={(id) => id}
           contentContainerStyle={{
             gap: 10,
