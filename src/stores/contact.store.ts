@@ -1,6 +1,5 @@
 import { User } from 'firebase/auth';
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
@@ -50,29 +49,23 @@ export const useContactStore = create<contactStore>((set, get) => ({
       orderBy('name'),
     );
 
-    return onSnapshot(
-      orderedContactsCollection,
-      (snapshot) => {
-        const updatedContacts: Contact[] = snapshot.docs.map((doc) => {
-          return {
-            id: doc.id,
-            ...doc.data(),
-          } as Contact;
-        });
+    return onSnapshot(orderedContactsCollection, (snapshot) => {
+      const updatedContacts: Contact[] = snapshot.docs.map((doc) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+        } as Contact;
+      });
 
-        set({
-          contacts: updatedContacts,
-          contactIds: updatedContacts.reduce(
-            (tempIds: Contact['id'][], contact: Contact) => [...tempIds, contact.id],
-            [],
-          ),
-          isLoadingContact: false,
-        });
-      },
-      (error) => {
-        console.error('Error getting contacts: ', error);
-      },
-    );
+      set({
+        contacts: updatedContacts,
+        contactIds: updatedContacts.reduce(
+          (tempIds: Contact['id'][], contact: Contact) => [...tempIds, contact.id],
+          [],
+        ),
+        isLoadingContact: false,
+      });
+    });
   },
 
   addContact: (name) => {

@@ -18,15 +18,18 @@ export default function ContactItem({ contactId }: Contact['id']) {
 
   return (
     <Pressable
-      className="bg-dark2 w-[370] h-17 flex justify-center rounded-2xl px-2 py-2"
+      className="bg-dark2 w-[95vw] h-[72] flex-row items-center justify-start rounded-2xl px-3"
       onPress={() => console.log('Press ', contact.name)}>
-      <View className="flex flex-row items-center">
-        <View className="bg-dark1 w-12 h-12 rounded-full mr-3" />
-        <View className="flex flex-col gap-2">
-          <Text className="text-white font-semibold" style={{ fontSize: 18 }}>
-            {contact.name}
-          </Text>
-          <View className="flex flex-row items-centerm">
+      <Image
+        source={require('../../assets/images/profilePictureNoBG.svg')}
+        className="w-12 h-12 bg-dark1 rounded-full mr-3"
+      />
+      <View className="flex flex-col gap-2">
+        <Text className="text-white font-semibold" style={{ fontSize: 18 }}>
+          {contact.name}
+        </Text>
+        {contact?.tags.length > 0 && (
+          <View className="flex flex-row">
             <FlatList
               data={contact.tags.slice(0, 3)}
               renderItem={({ item }) => <MiniTag tagId={item} />}
@@ -38,12 +41,12 @@ export default function ContactItem({ contactId }: Contact['id']) {
               horizontal
             />
             {contact.tags.length > 3 ? (
-              <View className="w-6 h-6 items-center justify-center border border-amber rounded-full">
+              <View className="w-6 h-6 items-center justify-center border border-amber rounded-full ml-3">
                 <Text className="text-white">+{contact.tags.length - 3}</Text>
               </View>
             ) : null}
           </View>
-        </View>
+        )}
       </View>
     </Pressable>
   );

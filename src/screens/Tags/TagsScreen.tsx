@@ -1,7 +1,10 @@
-import { useNavigation } from '@react-navigation/native';
-import { Image } from 'expo-image';
-import { FlatList, Pressable, Text, View } from 'react-native';
+import { useState } from 'react';
+import { FlatList, View } from 'react-native';
 
+import AddBar from '../../components/AddBar';
+import CreateTagModal from '../../components/Modals/CreateTagModal';
+import SearchBar from '../../components/SearchBar';
+import SelectItemType from '../../components/SelectItemType';
 import TagItem from '../../components/Tags/TagItem';
 import { useTagStore } from '../../stores/tag.store';
 
@@ -10,29 +13,26 @@ export default function TagsScreen({ navigation }: TagsScreenProps) {
     tagIds: state.tagIds,
   }));
 
+  const [triggerCreateTagModal, setTriggerCreateTagModal] = useState(false);
+  const [tagIdsToRender, setTagIdsToRender] = useState(tagIds);
+
   return (
-    <View className="bg-dark1 h-full flex items-center pt-4">
-      <View className="flex flex-row gap-6">
-        <Pressable
-          className="w-24 h-8 bg-opacity-0 flex items-center justify-center pb-[2] rounded-2xl border border-purple"
-          onPress={() => navigation.navigate('ContactsScreen')}>
-          <Text className="text-white">Contact</Text>
-        </Pressable>
-        <Pressable className="w-24 h-8 bg-amber flex items-center justify-center pb-[2] rounded-2xl">
-          <Text className="text-dark1">Tag</Text>
-        </Pressable>
+    <View className="bg-dark1 h-full flex items-center pt-2">
+      <CreateTagModal trigger={triggerCreateTagModal} setTrigger={setTriggerCreateTagModal} />
+      <SelectItemType itemType="tag" navigation={navigation} />
+      <SearchBar itemType="tag" itemIdsToRender={tagIds} setItemIdsToRender={setTagIdsToRender} />
+      <AddBar setTrigger={setTriggerCreateTagModal} />
+      <View className="mt-6">
+        <FlatList
+          data={tagIdsToRender}
+          renderItem={({ item }) => <TagItem tagId={item} />}
+          keyExtractor={(id) => id}
+          contentContainerStyle={{
+            gap: 10,
+          }}
+          style={{ height: '85%', flexGrow: 0 }}
+        />
       </View>
-      <View className="flex flex-row items-center justify-center gap-y-6 gap-x-2 mt-0">
-        <View className="w-[290] h-[0.5] bg-lightgrey mt-6" />
-        <Pressable onPress={() => console.log('Press')}>
-          <Image source={require('../../assets/images/add.svg')} className="w-6 h-6" />
-        </Pressable>
-      </View>
-      <FlatList
-        data={tagIds}
-        renderItem={({ item }) => <TagItem tagId={item} />}
-        keyExtractor={(id) => id}
-      />
     </View>
   );
 }

@@ -43,7 +43,7 @@ export default function LogIn({ navigation }: LogInProps) {
         <TextInput
           placeholderTextColor="lightgrey"
           className="text-white bg-dark1 placeholder:text-lightgrey w-[280] h-[40] mt-4  px-4 rounded-md border border-lightgrey focus:border-1 focus:border-white blur:border-lightgrey blur:border"
-          placeholder="email"
+          placeholder="Email"
           autoCapitalize="none"
           autoCorrect={false}
           onChange={(e) => setEmail(e.nativeEvent.text)}
