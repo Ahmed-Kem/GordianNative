@@ -1,20 +1,31 @@
 import { useState } from 'react';
 import { FlatList, View } from 'react-native';
 
-import AddBar from '../../components/AddBar';
 import CreateTagModal from '../../components/Modals/CreateTagModal';
-import SearchBar from '../../components/SearchBar';
-import SelectItemType from '../../components/SelectItemType';
 import TagItem from '../../components/Tags/TagItem';
+import AddBar from '../../components/UI/AddBar';
+import SearchBar from '../../components/UI/SearchBar';
+import SelectItemType from '../../components/UI/SelectItemType';
 import { useTagStore } from '../../stores/tag.store';
 
 export default function TagsScreen({ navigation }: TagsScreenProps) {
-  const { tagIds } = useTagStore((state) => ({
+  const { tagIds, getTag } = useTagStore((state) => ({
     tagIds: state.tagIds,
+    getTag: state.getTag,
   }));
 
   const [triggerCreateTagModal, setTriggerCreateTagModal] = useState(false);
   const [tagIdsToRender, setTagIdsToRender] = useState(tagIds);
+
+  let tagLetterSection = '#';
+
+  function isTagLetterSectionDifferent(title) {
+    const isLetterDiff = tagLetterSection !== title.charAt(0);
+    if (isLetterDiff) {
+      tagLetterSection = title.charAt(0);
+    }
+    return isLetterDiff;
+  }
 
   return (
     <View className="bg-dark1 h-full flex items-center pt-2">
@@ -25,12 +36,14 @@ export default function TagsScreen({ navigation }: TagsScreenProps) {
       <View className="mt-6">
         <FlatList
           data={tagIdsToRender}
-          renderItem={({ item }) => <TagItem tagId={item} />}
+          renderItem={({ item }) => (
+            <TagItem tagId={item} isShowLetter={isTagLetterSectionDifferent(getTag(item).name)} />
+          )}
           keyExtractor={(id) => id}
           contentContainerStyle={{
             gap: 10,
           }}
-          style={{ height: '85%', flexGrow: 0 }}
+          style={{ height: '89%', flexGrow: 0 }}
         />
       </View>
     </View>

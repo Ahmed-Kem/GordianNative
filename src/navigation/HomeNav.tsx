@@ -3,7 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
-import Header from '../components/Header';
+import Header from '../components/UI/Header';
+import ContactDetail from '../screens/Contacts/ContactDetail';
 import ContactsScreen from '../screens/Contacts/ContactsScreen';
 import LoadingScreen from '../screens/LoadingScreen';
 import TagsScreen from '../screens/Tags/TagsScreen';
@@ -76,11 +77,37 @@ export default function HomeNav() {
         },
       }}>
       {isLoadingContact || isLoadingTag ? (
-        <HomeStack.Screen name="LoadingScreen" component={LoadingScreen} />
+        <HomeStack.Screen
+          name="LoadingScreen"
+          component={LoadingScreen}
+          options={{
+            animation: 'fade_from_bottom',
+          }}
+        />
       ) : (
         <>
-          <HomeStack.Screen name="ContactsScreen" component={ContactsScreen} />
-          <HomeStack.Screen name="TagsScreen" component={TagsScreen} />
+          <HomeStack.Screen
+            name="ContactsScreen"
+            component={ContactsScreen}
+            options={{
+              animation: 'slide_from_left',
+            }}
+          />
+          <HomeStack.Screen
+            name="TagsScreen"
+            component={TagsScreen}
+            options={{
+              animation: 'slide_from_right',
+            }}
+          />
+          <HomeStack.Screen
+            name="ContactDetail"
+            component={ContactDetail}
+            options={{
+              headerTitle: () => <Header isGoBack />,
+              animation: 'slide_from_right',
+            }}
+          />
         </>
       )}
     </HomeStack.Navigator>

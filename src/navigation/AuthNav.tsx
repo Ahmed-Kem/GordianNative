@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect } from 'react';
 
 import HomeNav from './HomeNav';
-import Header from '../components/Header';
+import Header from '../components/UI/Header';
 import AuthScreen from '../screens/Auth/AuthScreen';
 import LogIn from '../screens/Auth/LogIn';
 import SignUp from '../screens/Auth/SignUp';

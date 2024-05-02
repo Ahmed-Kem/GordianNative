@@ -2,37 +2,38 @@ import { Image } from 'expo-image';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
 import { useContactStore } from '../../stores/contact.store';
-import { useTagStore } from '../../stores/tag.store';
 import MiniTag from '../Tags/MiniTag';
 
 export default function ContactItem({
   contactId,
+  navigation,
   isShowLetter,
 }: {
   contactId: string;
+  navigation: any;
   isShowLetter?: boolean;
 }) {
-  const { getContact } = useContactStore((state) => ({
+  const { getContact, setSelectedContactId } = useContactStore((state) => ({
     getContact: state.getContact,
-  }));
-
-  const { getTag } = useTagStore((state) => ({
-    getTag: state.getTag,
+    setSelectedContactId: state.setSelectedContactId,
   }));
 
   const contact = getContact(contactId);
 
   return (
-    <View className="flex flex-col items-start bg-none w-[95vw] h-[72]">
+    <View className="flex flex-col items-start bg-none w-[95vw]">
       {isShowLetter && (
         <Text className="h-7 text-white font-semibold text-2xl ml-4 mb-4">
           {contact.name.charAt(0).toUpperCase()} .
         </Text>
       )}
-
       <Pressable
         className="bg-dark2 w-[95vw] h-[72] flex-row items-center justify-start rounded-2xl px-3"
-        onPress={() => console.log('Press ', contact.name)}>
+        onPress={() => {
+          setSelectedContactId(contactId);
+
+          navigation.push('ContactDetail');
+        }}>
         <Image
           source={require('../../assets/images/profilePictureNoBG.svg')}
           className="w-12 h-12 bg-dark1 rounded-full mr-3"

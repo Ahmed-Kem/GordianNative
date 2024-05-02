@@ -1,6 +1,6 @@
 import { FlatList, Modal, Pressable, Text, View } from 'react-native';
 
-import { colors } from '../utils/constants/colors';
+import { colors } from '../../utils/constants/colors';
 
 export default function SelectItemType({ itemType, navigation }) {
   function switchType() {

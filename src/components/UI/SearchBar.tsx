@@ -2,8 +2,8 @@ import { Image } from 'expo-image';
 import { useRef, useEffect } from 'react';
 import { Pressable, TextInput, Text, View } from 'react-native';
 
-import { useContactStore } from '../stores/contact.store';
-import { useTagStore } from '../stores/tag.store';
+import { useContactStore } from '../../stores/contact.store';
+import { useTagStore } from '../../stores/tag.store';
 
 type Item = Contact | Tag;
 
@@ -36,7 +36,7 @@ export default function SearchBar({
   return (
     <View className="flex flex-row items-center mx-1 mt-3">
       <Image
-        source={require('../assets/images/search.svg')}
+        source={require('../../assets/images/search.svg')}
         className="w-5 h-5 absolute left-4 right-2 z-10"
       />
       <TextInput
