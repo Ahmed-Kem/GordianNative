@@ -11,7 +11,7 @@ export default function Header({ isGoBack = false, isOptions = false, isSignOut 
   }));
 
   return (
-    <View className="w-[95%] h-10 right-[3%] bg-dark2 rounded-lg flex flex-row items-center justify-between ml-1 pl-3 pr-1">
+    <View className="w-[95vw] h-10 right-[3%] bg-dark2 rounded-lg flex flex-row items-center justify-between ml-1 pl-3 pr-1">
       {isGoBack ? (
         <Pressable className="w-8" onPress={() => navigation.goBack()}>
           <Image source={require('../../assets/images/backArrow.svg')} className="w-2 h-4" />

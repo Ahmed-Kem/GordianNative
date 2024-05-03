@@ -19,9 +19,9 @@ export default function ActionButton({ itemType, btns }) {
       : require('../../assets/images/blackPlus.svg');
 
   return (
-    <View>
+    <View className="absolute bottom-8 right-6">
       {(itemType === 'contact' || itemType === 'tag') && (
-        <View className="flex flex-col items-end gap-y-6 absolute bottom-6 right-6">
+        <View className="flex flex-col items-end gap-y-6 ">
           {triggerBtn && (
             <View className="gap-y-3 items-end">
               {btns.map((btn) => (

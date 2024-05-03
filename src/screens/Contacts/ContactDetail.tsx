@@ -23,27 +23,29 @@ export default function ContactDetail({ navigation }: ContactDetailProps) {
   ];
 
   return (
-    <View className="bg-dark1 h-[92.3vh] w-full">
+    <View className="bg-dark1 h-[90vh] w-full items-center">
       <ScrollView
-        className="bg-none w-full flex pt-4"
+        className="w-[95vw] h-[85vh] flex pt-4  mb-4"
         contentContainerStyle={{ alignItems: 'center' }}>
         {/*
         <ContactDetailHeader contact={contact} setTrigger={setTriggerEditContactModal} />
         <ContactDetailBody contact={contact} />
     */}
 
-        <Image
-          source={require('../../assets/images/profilePictureNoBG.svg')}
-          className="w-[120] h-[120] bg-dark2 rounded-full"
-        />
-        <Text className="mt-4 text-white text-2xl font-semibold">{contact.name}</Text>
+        <View className="bg-dark2 flex w-[95vw] min-h-[85vh] pt-4 rounded-xl mb-4 pb-4 items-center">
+          <Image
+            source={require('../../assets/images/profilePictureNoBG.svg')}
+            className="w-[120] h-[120] bg-dark2 rounded-full"
+          />
+          <Text className="mt-4 text-white text-2xl font-semibold">{contact.name}</Text>
 
-        <View className="pt-6 w-full flex flex-row justify-center px-5 flex-wrap gap-3">
-          {contact.tags.map((tagId) => (
-            <View key={tagId} className="mr-0">
-              <MiniTag tagId={tagId} />
-            </View>
-          ))}
+          <View className="pt-6 w-full flex flex-row justify-center px-5 flex-wrap gap-3">
+            {contact.tags.map((tagId) => (
+              <View key={tagId} className="mr-0">
+                <MiniTag tagId={tagId} />
+              </View>
+            ))}
+          </View>
         </View>
       </ScrollView>
       <ActionButton itemType="contact" btns={actionBtns} />
