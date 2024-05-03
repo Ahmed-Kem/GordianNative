@@ -39,7 +39,7 @@ export default function TagsScreen({ navigation }: TagsScreenProps) {
           renderItem={({ item }) => (
             <TagItem tagId={item} isShowLetter={isTagLetterSectionDifferent(getTag(item).name)} />
           )}
-          keyExtractor={(id) => id}
+          keyExtractor={(item) => item}
           contentContainerStyle={{
             gap: 10,
           }}

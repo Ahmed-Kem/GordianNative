@@ -48,7 +48,7 @@ export default function ContactsScreen({ navigation }: ContactsScreenProps) {
               isShowLetter={isContactLetterSectionDifferent(getContact(item).name)}
             />
           )}
-          keyExtractor={(id) => id}
+          keyExtractor={(item) => item}
           contentContainerStyle={{
             gap: 10,
           }}

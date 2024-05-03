@@ -17,7 +17,7 @@ export default function ModalTemplate(props) {
         style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)' }}
         onPress={() => props.setTrigger(false)}>
         <Pressable
-          className="top-[-100] flex flex-col relative p-6 bg-dark2 rounded-xl items-start"
+          className="top-[-100] flex flex-col relative p-6 bg-dark1 rounded-xl items-start"
           onPress={(e) => e.stopPropagation()}>
           {props.children}
         </Pressable>

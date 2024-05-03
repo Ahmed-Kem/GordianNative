@@ -11,6 +11,7 @@ export default function ActionButton({ itemType, btns }) {
     setTriggerBtn(!triggerBtn);
   }
 
+  const btnColor = itemType === 'contact' ? colors.lightpurple : colors.amber;
   const bgColors = itemType === 'contact' ? colors.purple : colors.amber;
   const textColor = itemType === 'contact' ? colors.white : colors.black;
   const plusSvg =
@@ -28,7 +29,7 @@ export default function ActionButton({ itemType, btns }) {
                 <Pressable
                   key={btn.name}
                   className="px-4 py-2 justify-center rounded-lg"
-                  style={{ backgroundColor: bgColors, width: '100%' }}
+                  style={{ backgroundColor: btnColor, width: '100%' }}
                   onPress={() => {
                     btn.btnClick();
                     toggleBtn();
