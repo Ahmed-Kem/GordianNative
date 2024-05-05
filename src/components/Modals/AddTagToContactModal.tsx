@@ -11,6 +11,7 @@ export default function AddTagToContactModal({
   trigger,
   setTrigger,
 }: {
+  contactId: string;
   trigger: boolean;
   setTrigger: (value: boolean) => void;
 }) {

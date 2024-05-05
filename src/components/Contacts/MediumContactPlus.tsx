@@ -9,12 +9,10 @@ import MiniTag from '../Tags/MiniTag';
 export default function MediumContact({
   contactId,
   tagId,
-  navigation,
   isShowLetter,
 }: {
   contactId: string;
   tagId: string;
-  navigation: any;
   isShowLetter?: boolean;
 }) {
   const { getContact, addTagToContact, deleteTagFromContact, setSelectedContactId } =
@@ -44,13 +42,11 @@ export default function MediumContact({
         </Text>
       )}
       <Pressable
-        className="bg-dark3 w-[90vw] h-[50] flex-row items-center justify-start rounded-2xl px-3"
-        onPress={() => {
-          setSelectedContactId(contactId);
-
-          navigation.push('ContactDetail');
+        className="w-[70vw] h-[50] flex-row items-center justify-start rounded-2xl px-3"
+        style={{
+          backgroundColor: isContactIncluded ? colors.lightpurple : colors.dark3,
         }}
-        /*onPress={() => {
+        onPress={() => {
           if (isContactIncluded) {
             deleteTagFromContact(contact, tag);
             deleteContactFromTag(tag, contact);
@@ -58,8 +54,7 @@ export default function MediumContact({
             addTagToContact(contact, tag);
             addContactToTag(tag, contact);
           }
-        }}*/
-      >
+        }}>
         <Image
           source={require('../../assets/images/profilePictureNoBG.svg')}
           className="w-10 h-10 bg-dark3 rounded-full mr-3"

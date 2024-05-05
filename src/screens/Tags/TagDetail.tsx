@@ -4,6 +4,7 @@ import { FlatList, ScrollView, Text, View } from 'react-native';
 
 import ActionButton from '../../components/Buttons/ActionButton';
 import MediumContact from '../../components/Contacts/MediumContact';
+import AddContactToTagModal from '../../components/Modals/AddContactToTagModal';
 import { useContactStore } from '../../stores/contact.store';
 import { useTagStore } from '../../stores/tag.store';
 
@@ -39,11 +40,11 @@ export default function TagDetail({ navigation }: TagDetailProps) {
 
   return (
     <View className="bg-dark1 h-[100%] w-full items-center">
-      {/* <AddContactToTagModal
+      <AddContactToTagModal
         tagId={selectedTagId}
         trigger={triggerAddContactToTagModal}
         setTrigger={setTriggerAddContactToTagModal}
-      /> */}
+      />
       <ScrollView
         className="w-[95vw] h-[150%] flex pt-4  mb-4"
         contentContainerStyle={{ alignItems: 'center' }}>

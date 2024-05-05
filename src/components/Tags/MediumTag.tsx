@@ -32,7 +32,7 @@ export default function MediumTag({
   const isTagIncluded = contact.tags.includes(tagId);
 
   return (
-    <View className="flex flex-col items-start bg-none w-[80vw]">
+    <View className="flex flex-col items-start bg-none">
       {isShowLetter && (
         <Text className="h-7 text-white font-semibold text-xl ml-4 mb-4">
           {tag.name.charAt(0).toUpperCase()} .
