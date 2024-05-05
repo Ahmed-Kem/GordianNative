@@ -55,7 +55,7 @@ export default function ContactItem({
                 horizontal
               />
               {contact.tags.length > 3 ? (
-                <View className="w-6 h-6 items-center justify-center border border-amber rounded-full ml-3">
+                <View className="w-6 h-6 items-center justify-center border border-amber rounded-full ml-2">
                   <Text className="text-white">+{contact.tags.length - 3}</Text>
                 </View>
               ) : null}

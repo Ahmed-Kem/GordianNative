@@ -11,6 +11,7 @@ import {
 } from 'firebase/firestore';
 import { create } from 'zustand';
 
+import { useContactStore } from './contact.store';
 import { firestore } from '../../firebaseConfig';
 
 function generateRandomColor() {
@@ -52,6 +53,26 @@ export const useTagStore = create<tagStore>((set, get) => ({
   initTagStore: (_user) => {
     set({ user: _user });
 
+    const sortContacts = (contactIds: Contact['id'][]) => {
+      const getContact = useContactStore.getState().getContact;
+      return contactIds.sort((a, b) => {
+        const contactA = getContact(a);
+        const contactB = getContact(b);
+
+        if (typeof contactA === 'undefined' || typeof contactB === 'undefined') {
+          return 0;
+        }
+
+        if (contactA.name < contactB.name) {
+          return -1;
+        }
+        if (contactA.name > contactB.name) {
+          return 1;
+        }
+        return 0;
+      });
+    };
+
     const orderedTagsCollection = query(
       collection(firestore, 'Users', _user.uid, 'Tags'),
       orderBy('name'),
@@ -63,6 +84,7 @@ export const useTagStore = create<tagStore>((set, get) => ({
           ({
             id: doc.id,
             ...doc.data(),
+            contacts: sortContacts(doc.data().contacts),
           }) as Tag,
       );
       set({

@@ -14,7 +14,7 @@ export default function ModalTemplate(props) {
       }}>
       <Pressable
         className="w-screen h-screen flex justify-center items-center z-50"
-        style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)' }}
+        //style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)' }}
         onPress={() => props.setTrigger(false)}>
         <Pressable
           className="top-[-100] flex flex-col relative p-6 bg-dark1 rounded-xl items-start"

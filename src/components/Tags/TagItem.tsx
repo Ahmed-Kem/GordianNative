@@ -5,13 +5,16 @@ import { useTagStore } from '../../stores/tag.store';
 
 export default function TagItem({
   tagId,
+  navigation,
   isShowLetter,
 }: {
   tagId: string;
+  navigation: any;
   isShowLetter?: boolean;
 }) {
-  const { getTag } = useTagStore((state) => ({
+  const { getTag, setSelectedTagId } = useTagStore((state) => ({
     getTag: state.getTag,
+    setSelectedTagId: state.setSelectedTagId,
   }));
 
   const tag = getTag(tagId);
@@ -25,7 +28,10 @@ export default function TagItem({
       )}
       <Pressable
         className="bg-dark2 w-[95vw] h-[72] flex-row items-center justify-start rounded-2xl px-3"
-        onPress={() => console.log('Press', tag.name)}>
+        onPress={() => {
+          setSelectedTagId(tagId);
+          navigation.push('TagDetail');
+        }}>
         {tag?.photoUrl === '' || !tag?.photoUrl ? (
           <View className="w-12 h-12 bg-none rounded-full mr-3" />
         ) : (

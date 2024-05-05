@@ -35,11 +35,6 @@ export default function ContactDetail({ navigation }: ContactDetailProps) {
       <ScrollView
         className="w-[95vw] h-[150%] flex pt-4  mb-4"
         contentContainerStyle={{ alignItems: 'center' }}>
-        {/*
-        <ContactDetailHeader contact={contact} setTrigger={setTriggerEditContactModal} />
-        <ContactDetailBody contact={contact} />
-    */}
-
         <View className="bg-dark2 flex w-[95vw] min-h-[87vh] pt-4 rounded-xl mb-4 pb-4 items-center">
           <Image
             source={require('../../assets/images/profilePictureNoBG.svg')}

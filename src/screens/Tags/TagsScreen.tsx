@@ -37,7 +37,11 @@ export default function TagsScreen({ navigation }: TagsScreenProps) {
         <FlatList
           data={tagIdsToRender}
           renderItem={({ item }) => (
-            <TagItem tagId={item} isShowLetter={isTagLetterSectionDifferent(getTag(item).name)} />
+            <TagItem
+              tagId={item}
+              navigation={navigation}
+              isShowLetter={isTagLetterSectionDifferent(getTag(item).name)}
+            />
           )}
           keyExtractor={(item) => item}
           contentContainerStyle={{

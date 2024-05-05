@@ -7,6 +7,7 @@ import Header from '../components/UI/Header';
 import ContactDetail from '../screens/Contacts/ContactDetail';
 import ContactsScreen from '../screens/Contacts/ContactsScreen';
 import LoadingScreen from '../screens/LoadingScreen';
+import TagDetail from '../screens/Tags/TagDetail';
 import TagsScreen from '../screens/Tags/TagsScreen';
 import { useAuthStore } from '../stores/auth.store';
 import { useContactStore } from '../stores/contact.store';
@@ -104,7 +105,15 @@ export default function HomeNav() {
             name="ContactDetail"
             component={ContactDetail}
             options={{
-              headerTitle: () => <Header isGoBack />,
+              headerTitle: () => <Header isGoBack isOptions />,
+              animation: 'slide_from_right',
+            }}
+          />
+          <HomeStack.Screen
+            name="TagDetail"
+            component={TagDetail}
+            options={{
+              headerTitle: () => <Header isGoBack isOptions />,
               animation: 'slide_from_right',
             }}
           />

@@ -11,6 +11,7 @@ import {
 } from 'firebase/firestore';
 import { create } from 'zustand';
 
+import { useTagStore } from './tag.store';
 import { firestore } from '../../firebaseConfig';
 
 type contactStore = {
@@ -44,6 +45,26 @@ export const useContactStore = create<contactStore>((set, get) => ({
   initContactStore: (_user) => {
     set({ user: _user });
 
+    const sortTags = (tagIds: Tag['id'][]) => {
+      const getTag = useTagStore.getState().getTag;
+      return tagIds.sort((a, b) => {
+        const tagA = getTag(a);
+        const tagB = getTag(b);
+
+        if (typeof tagA === 'undefined' || typeof tagB === 'undefined') {
+          return 0;
+        }
+
+        if (tagA.name < tagB.name) {
+          return -1;
+        }
+        if (tagA.name > tagB.name) {
+          return 1;
+        }
+        return 0;
+      });
+    };
+
     const orderedContactsCollection = query(
       collection(firestore, 'Users', _user.uid, 'Contacts'),
       orderBy('name'),
@@ -54,6 +75,7 @@ export const useContactStore = create<contactStore>((set, get) => ({
         return {
           id: doc.id,
           ...doc.data(),
+          tags: sortTags(doc.data().tags),
         } as Contact;
       });
 
