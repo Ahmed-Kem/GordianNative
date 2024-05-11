@@ -41,7 +41,7 @@ export default function MediumTag({
       <Pressable
         className="bg-dark2 w-[70vw] h-[50] flex-row items-center justify-start rounded-2xl px-3"
         style={{
-          backgroundColor: isTagIncluded ? colors.lightpurple : colors.dark2,
+          backgroundColor: isTagIncluded ? colors.lightpurple : colors.dark3,
         }}
         onPress={() => {
           if (isTagIncluded) {

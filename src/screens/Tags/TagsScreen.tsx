@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FlatList, View } from 'react-native';
 
 import CreateTagModal from '../../components/Modals/CreateTagModal';
@@ -16,6 +16,10 @@ export default function TagsScreen({ navigation }: TagsScreenProps) {
 
   const [triggerCreateTagModal, setTriggerCreateTagModal] = useState(false);
   const [tagIdsToRender, setTagIdsToRender] = useState(tagIds);
+
+  useEffect(() => {
+    setTagIdsToRender(tagIds);
+  }, [tagIds]);
 
   let tagLetterSection = '#';
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FlatList, View } from 'react-native';
 
 import ContactItem from '../../components/Contacts/ContactItem';
@@ -16,6 +16,10 @@ export default function ContactsScreen({ navigation }: ContactsScreenProps) {
 
   const [triggerCreateContactModal, setTriggerCreateContactModal] = useState(false);
   const [contactIdsToRender, setContactIdsToRender] = useState(contactIds);
+
+  useEffect(() => {
+    setContactIdsToRender(contactIds);
+  }, [contactIds]);
 
   let contactLetterSection = '#';
 

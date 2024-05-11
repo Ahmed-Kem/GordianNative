@@ -50,7 +50,7 @@ export default function TagDetail({ navigation }: TagDetailProps) {
         contentContainerStyle={{ alignItems: 'center' }}>
         <View className="bg-dark2 flex w-[95vw] min-h-[87vh] pt-4 rounded-xl mb-4 pb-4 items-center">
           <Text className="mt-4 text-white text-2xl font-semibold">{tag.name}</Text>
-          <Text className="mt-4 mx-4 text-white text-md font-normal">{tag.description}</Text>
+          <Text className="mt-4 mx-4 text-white text-base font-normal">{tag.description}</Text>
 
           <View className="pt-6 w-full flex flex-row px-5 flex-wrap gap-3 justify-center">
             {tag.contacts.map((contactId) => (

@@ -11,7 +11,7 @@ export default function ActionButton({ itemType, btns }) {
     setTriggerBtn(!triggerBtn);
   }
 
-  const btnColor = itemType === 'contact' ? colors.lightpurple : colors.amber;
+  const btnColor = itemType === 'contact' ? colors.purple : colors.amber;
   const bgColors = itemType === 'contact' ? colors.purple : colors.amber;
   const textColor = itemType === 'contact' ? colors.white : colors.black;
   const plusSvg =
