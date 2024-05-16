@@ -7,6 +7,8 @@ export default function MiniTag({ tagId }: Tag['id']) {
     getTag: state.getTag,
   }));
   const tag: Tag = getTag(tagId);
+
+  if (!tag) return null;
   return (
     <View
       style={{ borderColor: tag.color }}

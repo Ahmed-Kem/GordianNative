@@ -36,6 +36,8 @@ export default function MediumContact({
 
   const isContactIncluded = tag.contacts.includes(contactId);
 
+  if (!contact) return null;
+
   return (
     <View className="flex flex-col items-start bg-none">
       {isShowLetter && (

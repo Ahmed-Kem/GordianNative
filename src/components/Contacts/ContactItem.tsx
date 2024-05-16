@@ -20,6 +20,7 @@ export default function ContactItem({
 
   const contact = getContact(contactId);
 
+  if (!contact) return null;
   return (
     <View className="flex flex-col items-start bg-none w-[95vw]">
       {isShowLetter && (

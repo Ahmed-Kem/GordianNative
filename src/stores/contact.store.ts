@@ -33,6 +33,7 @@ type contactStore = {
   deleteTagFromContact: (contact: Contact, tag: Tag) => void;
   deleteAllTagsFromContact: (contact: Contact) => void;
   resetContactStore: () => void;
+  sortContacts: (contactIds: Contact['id'][]) => Contact['id'][];
 };
 
 export const useContactStore = create<contactStore>((set, get) => ({
@@ -45,26 +46,6 @@ export const useContactStore = create<contactStore>((set, get) => ({
   initContactStore: (_user) => {
     set({ user: _user });
 
-    const sortTags = (tagIds: Tag['id'][]) => {
-      const getTag = useTagStore.getState().getTag;
-      return tagIds.sort((a, b) => {
-        const tagA = getTag(a);
-        const tagB = getTag(b);
-
-        if (typeof tagA === 'undefined' || typeof tagB === 'undefined') {
-          return 0;
-        }
-
-        if (tagA.name < tagB.name) {
-          return -1;
-        }
-        if (tagA.name > tagB.name) {
-          return 1;
-        }
-        return 0;
-      });
-    };
-
     const orderedContactsCollection = query(
       collection(firestore, 'Users', _user.uid, 'Contacts'),
       orderBy('name'),
@@ -75,7 +56,7 @@ export const useContactStore = create<contactStore>((set, get) => ({
         return {
           id: doc.id,
           ...doc.data(),
-          tags: sortTags(doc.data().tags),
+          tags: useTagStore.getState().sortTags(doc.data().tags),
         } as Contact;
       });
 
@@ -227,4 +208,24 @@ export const useContactStore = create<contactStore>((set, get) => ({
       isLoadingContact: true,
       selectedContactId: null,
     }),
+
+  sortContacts: (contactIds) => {
+    const getContact = get().getContact;
+    return contactIds.sort((a, b) => {
+      const contactA = getContact(a);
+      const contactB = getContact(b);
+
+      if (typeof contactA === 'undefined' || typeof contactB === 'undefined') {
+        return 0;
+      }
+
+      if (contactA.name < contactB.name) {
+        return -1;
+      }
+      if (contactA.name > contactB.name) {
+        return 1;
+      }
+      return 0;
+    });
+  },
 }));

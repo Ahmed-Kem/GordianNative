@@ -1,7 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
-import { FlatList, Pressable, Text, View } from 'react-native';
 
 import Header from '../components/UI/Header';
 import ContactDetail from '../screens/Contacts/ContactDetail';
@@ -69,13 +68,7 @@ export default function HomeNav() {
     <HomeStack.Navigator
       initialRouteName="ContactsScreen"
       screenOptions={{
-        headerTitle: () => <Header isSignOut />,
-        headerBackVisible: false,
-        headerShadowVisible: false,
-        headerTitleAlign: 'center',
-        headerStyle: {
-          backgroundColor: colors.dark1,
-        },
+        headerShown: false,
       }}>
       {isLoadingContact || isLoadingTag ? (
         <HomeStack.Screen
@@ -105,7 +98,6 @@ export default function HomeNav() {
             name="ContactDetail"
             component={ContactDetail}
             options={{
-              headerTitle: () => <Header isGoBack isOptions />,
               animation: 'slide_from_right',
             }}
           />
@@ -113,7 +105,6 @@ export default function HomeNav() {
             name="TagDetail"
             component={TagDetail}
             options={{
-              headerTitle: () => <Header isGoBack isOptions />,
               animation: 'slide_from_right',
             }}
           />

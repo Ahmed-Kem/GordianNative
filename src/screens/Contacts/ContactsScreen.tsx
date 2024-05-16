@@ -4,6 +4,7 @@ import { FlatList, View } from 'react-native';
 import ContactItem from '../../components/Contacts/ContactItem';
 import CreateContactModal from '../../components/Modals/CreateContactModal';
 import AddBar from '../../components/UI/AddBar';
+import Header from '../../components/UI/Header';
 import SearchBar from '../../components/UI/SearchBar';
 import SelectItemType from '../../components/UI/SelectItemType';
 import { useContactStore } from '../../stores/contact.store';
@@ -35,6 +36,8 @@ export default function ContactsScreen({ navigation }: ContactsScreenProps) {
         trigger={triggerCreateContactModal}
         setTrigger={setTriggerCreateContactModal}
       />
+      <Header isSignOut />
+
       <SelectItemType itemType="contact" navigation={navigation} />
       <SearchBar
         itemType="contact"
@@ -56,7 +59,7 @@ export default function ContactsScreen({ navigation }: ContactsScreenProps) {
           contentContainerStyle={{
             gap: 10,
           }}
-          style={{ height: '89%', flexGrow: 0 }}
+          style={{ height: '84%', flexGrow: 0 }}
         />
       </View>
     </View>

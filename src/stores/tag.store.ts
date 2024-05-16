@@ -41,6 +41,7 @@ type tagStore = {
   deleteContactFromTag: (tag: Tag, contact: Contact) => void;
   deleteAllContactsFromTag: (tag: Tag) => void;
   resetTagStore: () => void;
+  sortTags: (tagIds: Tag['id'][]) => Tag['id'][];
 };
 
 export const useTagStore = create<tagStore>((set, get) => ({
@@ -53,26 +54,6 @@ export const useTagStore = create<tagStore>((set, get) => ({
   initTagStore: (_user) => {
     set({ user: _user });
 
-    const sortContacts = (contactIds: Contact['id'][]) => {
-      const getContact = useContactStore.getState().getContact;
-      return contactIds.sort((a, b) => {
-        const contactA = getContact(a);
-        const contactB = getContact(b);
-
-        if (typeof contactA === 'undefined' || typeof contactB === 'undefined') {
-          return 0;
-        }
-
-        if (contactA.name < contactB.name) {
-          return -1;
-        }
-        if (contactA.name > contactB.name) {
-          return 1;
-        }
-        return 0;
-      });
-    };
-
     const orderedTagsCollection = query(
       collection(firestore, 'Users', _user.uid, 'Tags'),
       orderBy('name'),
@@ -84,7 +65,7 @@ export const useTagStore = create<tagStore>((set, get) => ({
           ({
             id: doc.id,
             ...doc.data(),
-            contacts: sortContacts(doc.data().contacts),
+            contacts: useContactStore.getState().sortContacts(doc.data().contacts),
           }) as Tag,
       );
       set({
@@ -201,4 +182,24 @@ export const useTagStore = create<tagStore>((set, get) => ({
   },
 
   resetTagStore: () => set({ tags: [], user: null, isLoadingTag: true }),
+
+  sortTags: (tagIds) => {
+    const getTag = useTagStore.getState().getTag;
+    return tagIds.sort((a, b) => {
+      const tagA = getTag(a);
+      const tagB = getTag(b);
+
+      if (typeof tagA === 'undefined' || typeof tagB === 'undefined') {
+        return 0;
+      }
+
+      if (tagA.name < tagB.name) {
+        return -1;
+      }
+      if (tagA.name > tagB.name) {
+        return 1;
+      }
+      return 0;
+    });
+  },
 }));

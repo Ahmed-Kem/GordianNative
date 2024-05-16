@@ -19,6 +19,7 @@ export default function TagItem({
 
   const tag = getTag(tagId);
 
+  if (!tag) return null;
   return (
     <View className="flex flex-col items-start bg-none w-[95vw]">
       {isShowLetter && (

@@ -16,6 +16,7 @@ export default function SearchBar({
   itemIdsToRender: Contact['id'][] | Tag['id'][];
   setItemIdsToRender: (itemIds: Contact['id'][] | Tag['id'][]) => void;
 }) {
+
   const { getContact } = useContactStore((state) => ({
     getContact: state.getContact,
   }));

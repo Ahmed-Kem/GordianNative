@@ -1,27 +1,64 @@
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { FlatList, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import ActionButton from '../../components/Buttons/ActionButton';
 import AddTagToContactModal from '../../components/Modals/AddTagToContactModal';
 import MiniTag from '../../components/Tags/MiniTag';
+import Header from '../../components/UI/Header';
 import { useContactStore } from '../../stores/contact.store';
+import { useTagStore } from '../../stores/tag.store';
 
 export default function ContactDetail({ navigation }: ContactDetailProps) {
-  const { selectedContactId, getContact, updateContact } = useContactStore((state) => ({
-    selectedContactId: state.selectedContactId,
-    getContact: state.getContact,
-    updateContact: state.updateContact,
+  const { selectedContactId, getContact, updateContact, setSelectedContactId, deleteContact } =
+    useContactStore((state) => ({
+      selectedContactId: state.selectedContactId,
+      getContact: state.getContact,
+      updateContact: state.updateContact,
+      setSelectedContactId: state.setSelectedContactId,
+      deleteContact: state.deleteContact,
+    }));
+
+  const { tags, deleteContactFromTag } = useTagStore((state) => ({
+    tags: state.tags,
+    deleteContactFromTag: state.deleteContactFromTag,
   }));
 
   const [triggerAddTagToContactModal, setTriggerAddTagToContactModal] = useState(false);
 
   const contact: Contact = getContact(selectedContactId);
 
+  async function handleDeleteContact() {
+    setSelectedContactId(null);
+
+    for (const tagId of contact.tags) {
+      await deleteContactFromTag(
+        tags.find((tag) => tag.id === tagId),
+        contact,
+      );
+    }
+    navigation.goBack();
+    await deleteContact(selectedContactId);
+  }
+
   const actionBtns = [
     {
       name: 'Add Tag',
       btnClick: () => setTriggerAddTagToContactModal(true),
+    },
+  ];
+
+  const optionBtns = [
+    {
+      name: 'Edit Contact',
+      btnClick: () => {
+        //setSelectedContactId(selectedContactId);
+      },
+    },
+    {
+      name: 'Delete Contact',
+      criticalBtn: true,
+      btnClick: handleDeleteContact,
     },
   ];
 
@@ -32,10 +69,11 @@ export default function ContactDetail({ navigation }: ContactDetailProps) {
         trigger={triggerAddTagToContactModal}
         setTrigger={setTriggerAddTagToContactModal}
       />
+      <Header isGoBack optionBtns={optionBtns} />
       <ScrollView
-        className="w-[95vw] h-[150%] flex pt-4  mb-4"
+        className="w-[95vw] h-[150%] flex pt-4"
         contentContainerStyle={{ alignItems: 'center' }}>
-        <View className="bg-dark2 flex w-[95vw] min-h-[87vh] pt-4 rounded-xl mb-4 pb-4 items-center">
+        <View className="bg-dark2 flex w-[95vw] min-h-[90vh] pt-4 rounded-xl mb-4 pb-4 items-center">
           <Image
             source={require('../../assets/images/profilePictureNoBG.svg')}
             className="w-[120] h-[120] bg-dark2 rounded-full"

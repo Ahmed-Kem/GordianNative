@@ -12,9 +12,9 @@ export default function SelectItemType({ itemType, navigation }) {
     }
   }
   return (
-    <View className="flex flex-row gap-6">
+    <View className="flex flex-row gap-6 mt-0">
       <Pressable
-        className="w-24 h-8  flex items-center justify-center pb-[2] rounded-2xl border border-purple"
+        className="w-24 h-8 flex items-center justify-center pb-[2] rounded-2xl border border-purple"
         style={{
           backgroundColor: itemType === 'contact' ? colors.purple : colors.dark1,
         }}
